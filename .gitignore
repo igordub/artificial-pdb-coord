@@ -115,3 +115,4 @@ scratch/*
 # Include .gitkeep into version control
 !**/.gitkeep
 
+.env
