@@ -1,0 +1,24 @@
+name: comp-biophys
+channels:
+  - defaults
+  - conda-forge
+  - schrodinger
+dependencies:
+  - ipykernel
+  - ipython
+  - jupyter
+  - jupyterlab
+  - matplotlib
+  - numpy
+  - pandas
+  - pep8
+  - pip
+  - python
+  - pyyaml
+  - seaborn
+  - yaml
+  - biopandas
+  - pymol
+  - python-dotenv
+  - jupyterlab_templates
+  

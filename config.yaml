@@ -1,0 +1,34 @@
+# File paths
+- data:
+    rawFilePath:    data/raw/
+    intFilePath:    data/interim/
+    proFilePath:    data/processed/
+    extFilePath:    data/external/
+    outPath:        output/
+    outPathScratch: scratch/
+
+# PDB data
+- pdb:
+    rawFilePath:     pdb/raw/
+    intFilePath:     pdb/interim/
+    proFilePath:     pdb/proccessed/
+    extFilePath:     pdb/external/
+    codeList:
+      - 1a2b
+      - 3c4d   
+
+- viz:
+    xtick.labelsize: 20
+    ytick.labelsize: 20
+    font.size: 20
+    figure.autolayout: False
+    figure.figsize: 12,6
+    figure.dpi: 300
+    axes.titlesize : 22
+    axes.labelsize : 20
+    lines.linewidth : 2
+    lines.markersize : 6
+    legend.fontsize: 16
+    mathtext.fontset: stix
+    font.family : STIXGeneral
+    legend.frameon : False
