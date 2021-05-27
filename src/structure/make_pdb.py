@@ -19,9 +19,9 @@ def main(output_dir):
 
     config = utils.read_config()
 
-    tetrahed_coords = make_tetrahedron(bond_length=10)
+    tetrahed_coords = make_tetrahedron(bond_length=4)
     # print(tetrahed_coords)
-    write_pdb_file(tetrahed_coords, output_filepath=path.join(output_dir, "tetrahed.pdb"))
+    write_pdb_file(tetrahed_coords, output_filepath=path.join(output_dir, "tetrahed.0.pdb"))
 
 def make_tetrahedron(bond_length=4):
     """ Creates coordinates of an tetrahedron, equilateral triangular pyramid.

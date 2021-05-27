@@ -15,9 +15,9 @@ import pandas as pd
 
 
 @click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+@click.argument('input_dir', type=click.Path(exists=True))
+@click.argument('output_dir', type=click.Path())
+def main(input_dir, output_dir):
     """ Runs simualtion scripts for processed PDB data (from pdb/processed/) 
         to generate raw data ready to be processed (saved in data/raw/).
     """
@@ -27,24 +27,25 @@ def main(input_filepath, output_filepath):
     # config = utils.read_config()
     # pdb_codes = config['pdb']['codeList']
 
-    # Get PDB files in input_filepath
-    pdb_filepaths = sorted(glob.glob(os.path.join(input_filepath, "1m9a.2.pdb")))
-    # pdb_filepaths = sorted(glob.glob(os.path.join(input_filepath, "*.pdb")))
+    # Get PDB files in input_dir
+    pdb_filenames = ["tetrahed.0.pdb"]
+    pdb_filepaths = [os.path.join(input_dir, pdb_filename)for pdb_filename in pdb_filenames]
+    # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "1m9a.2.pdb")))
+    # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.pdb")))
 
     # Simulate ENM
     for pdb_filepath in pdb_filepaths:
-        cutoff_radius = find_smallest_cutoff_radius(pdb_filepath, output_filepath, start_cutoff_radius = 7.0)
-        print("The smallest cutoff radius for 1M9A is {:.2f} angstroms".format(cutoff_radius))
+        scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 8.00")
 
-
-def scan_pdb(pdb_filepath, output_filepath, flag_combination="-ca -het -c 8.00"):
+def scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 8.00"):
     """ Executes Shell script with essential DDPT routines.
-        For inputs see scan_pdb.sh
+        For inputs see scan_enm.sh
     """
-    # Usage: scan_pdb.sh <pdb-filepath> <results-filepath> <cutoff>
-    subprocess.call(['bash', 'src/simulation/scan_pdb.sh', pdb_filepath, output_filepath, flag_combination]) 
 
-def find_smallest_cutoff_radius(pdb_filepath, output_filepath, start_cutoff_radius = 5.0, step=0.5):
+    # Usage: scan_enm.sh <pdb-filepath> <results-filepath> <cutoff>
+    subprocess.call(['bash', 'src/simulation/scan_enm.sh', pdb_filepath, output_dir, flag_combination]) 
+
+def find_smallest_cutoff_radius(pdb_filepath, output_dir, start_cutoff_radius = 5.0, step=0.5):
     """ Finds minimal cutoff radius values for the ENM which 
         avoids floppy modes due-to underconnected EN.
 
@@ -54,9 +55,9 @@ def find_smallest_cutoff_radius(pdb_filepath, output_filepath, start_cutoff_radi
 
     for cutoff_radius in np.arange(start_cutoff_radius, 15.5, 0.5):
         flag_combination = "-ca -c {}".format(cutoff_radius)
-        subprocess.call(['bash', 'src/simulation/find_smallest_cutoff_radius.sh', pdb_filepath, output_filepath, flag_combination])
+        subprocess.call(['bash', 'src/simulation/find_smallest_cutoff_radius.sh', pdb_filepath, output_dir, flag_combination])
 
-        eigenvalues = np.loadtxt(os.path.join(output_filepath, "eigenvalues"), max_rows=7)
+        eigenvalues = np.loadtxt(os.path.join(output_dir, "eigenvalues"), max_rows=7)
         eigenvals_sum_6 = np.sum(eigenvalues[0:6])
         eigenvals_sum_7 = np.sum(eigenvalues[0:7])
 
@@ -71,7 +72,7 @@ def find_smallest_cutoff_radius(pdb_filepath, output_filepath, start_cutoff_radi
             return cutoff_radius
 
         # # Create distance matrix
-        # dist_data = np.loadtxt(os.path.join(output_filepath, "dist.dat"), \
+        # dist_data = np.loadtxt(os.path.join(output_dir, "dist.dat"), \
         #     dtype={'names': ('res_num_i', 'res_num_j', 'dist'), 'formats': ('i4', 'i4', 'f4')})
 
         # counter = 0
@@ -97,7 +98,7 @@ def find_smallest_cutoff_radius(pdb_filepath, output_filepath, start_cutoff_radi
 # def make_distance_matrix(path):
 
 
-def brutally_scan_pdb(pdb_filepath, output_filepath, start_cutoff_radius=5.0):
+def brutally_scan_enm(pdb_filepath, output_dir, start_cutoff_radius=5.0):
     """ Performs simualtion for all possible GENENMM module useful flag
         combination. 
     """
@@ -121,8 +122,8 @@ def brutally_scan_pdb(pdb_filepath, output_filepath, start_cutoff_radius=5.0):
 
     for flag_combination in all_flag_permutations:
 
-        # Usage: scan_pdb.sh <pdb-filepath> <results-filepath> <cutoff>
-        subprocess.call(['bash', 'src/simulation/scan_pdb.sh', pdb_filepath, output_filepath, flag_combination]) 
+        # Usage: scan_enm.sh <pdb-filepath> <results-filepath> <cutoff>
+        subprocess.call(['bash', 'src/simulation/scan_enm.sh', pdb_filepath, output_dir, flag_combination]) 
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
