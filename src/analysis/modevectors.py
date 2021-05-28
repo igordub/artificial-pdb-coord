@@ -7,7 +7,7 @@ from math import *
 from pymol import cmd
 
 
-def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, outname="modevectors", head=1.0, tail=0.3, head_length=1.5, headrgb="1.0,1.0,1.0", tailrgb="1.0,1.0,1.0", cutoff=4.0, skip=0, cut=0.5, atom="CA", stat="show", factor=1.0, notail=0):
+def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, outname="modevectors", head=1.0, tail=0.3, head_length=1.5, head_rgb=(1.0,1.0,1.0), tail_rgb=(1.0,1.0,1.0), cutoff=4.0, skip=0, cut=0.5, atom="CA", stat="show", factor=1.0, notail=0):
     """
     Authors Sean Law & Srinivasa
     Michigan State University
@@ -54,10 +54,10 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
     atomtype = atom.strip('"[]()')
     objectname = objectname.strip('"[]()')
 
-    headrgb = headrgb.strip('" []()')
-    tailrgb = tailrgb.strip('" []()')
-    hr, hg, hb = list(map(float, headrgb.split(',')))
-    tr, tg, tb = list(map(float, tailrgb.split(',')))
+    # head_rgb = head_rgb.strip('" []()')
+    # tail_rgb = tail_rgb.strip('" []()')
+    hr, hg, hb = head_rgb
+    tr, tg, tb = tail_rgb
 
     version = cmd.get_version()[1]
     arrow = []

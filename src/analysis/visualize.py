@@ -42,7 +42,7 @@ def main(input_dir, output_dir):
     script_filepath = path.join(input_dir, "draw_enm.pml")
     structure_filepath = path.join(input_dir, "CAonly.pdb")
     cmd.reinitialize()
-    structure_name ="tetrahed"
+    structure_name ="CAonly"
     view = """set_view (\
      0.254109710,    0.685759246,    0.682028472,\
     -0.659577310,   -0.392885894,    0.640778780,\
@@ -50,16 +50,51 @@ def main(input_dir, output_dir):
      0.000000893,   -0.000001701,  -20.039798737,\
      2.060348749,    0.924048603,    0.750656426,\
     17.039802551,   23.039796829,  -20.000000000 )"""
-    draw_enm(structure_filepath, script_filepath, structure_name=structure_name, \
-                output_dir=output_dir, view=view)
+
+    draw_enm(structure_filepath, script_filepath, structure_name=structure_name, view=view)
     
+    cmd.set('sphere_scale', 0.5, structure_name)
+
+    cmd.viewport(width=1200, height=1200)
+    cmd.zoom(complete=1)
+
+    png_filepath = path.join(output_dir, "enm") + ".png"
+    pse_filepath = path.join(output_dir, "enm") + ".pse"
+
+    cmd.save(pse_filepath)
+    cmd.set('ray_opaque_background', 0)
+    cmd.png(png_filepath, width=1200, height=1200, ray=1)
+
     # Draw eigenvectors
     # cmd.reinitialize()
     for mode_number in range(7,13):
-        first_structure = path.join(input_dir, "CAonly.pdb")
-        last_structure = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
-        output_name = "mode_{}".format(mode_number)
-        draw_eigenvecotrs(first_structure, last_structure, output_name)
+        first_structure = "CAonly"
+        mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
+        last_structure = "struct_shift_{:03}".format(mode_number)
+        output_name= "mode_{:03}".format(mode_number)
+
+        cmd.load(mode_filepath, last_structure)
+        orange_colour = np.array([int(code) for code in config['colors']['orange'].split(',')])
+
+        modevectors(first_structure, last_structure, outname=output_name, cutoff=0, cut=0,\
+            factor=7.5, head=0.5, tail=0.2, head_length= 1, head_rgb = orange_colour/255, tail_rgb = orange_colour/255)
+        cmd.delete(last_structure)
+    
+
+    cmd.show_as('spheres', "CAonly")
+    cmd.show('sticks', "CAonly")
+    blue_colour = np.array([int(code) for code in config['colors']['blue'].split(',')])
+    cmd.color("0x{:02x}{:02x}{:02x}".format(*blue_colour), "rep spheres and CAonly")
+    cmd.set('grid_mode', 1)
+    cmd.set('grid_slot', -2, "CAonly")
+    cmd.set_view(\
+    (0.254109710,    0.685759246,    0.682028472,\
+    -0.659577310,   -0.392885894,    0.640778780,\
+     0.707380295,   -0.612679243,    0.352475613,\
+     0.000000000,    0.000000000,  -30.692567825,\
+     2.000000000,    1.154749870,    0.816750050,\
+   -79.449722290,  140.834869385,  -20.000000000) )
+
     cmd.save(path.join(output_dir, "modevectors.pse"))
 
 def load_data(data_filepath):
@@ -70,7 +105,7 @@ def load_data(data_filepath):
 
     return interim_data
 
-def draw_enm(structure_filepath, script_filepath, structure_name="enm", output_dir='.', view=None):
+def draw_enm(structure_filepath, script_filepath, structure_name="CAonly", view=None):
     """ Draws elastic network mode_numberl of a structure and save image.
     """
 
@@ -89,19 +124,8 @@ def draw_enm(structure_filepath, script_filepath, structure_name="enm", output_d
         cmd.orient()
     else:
         cmd.set_view(view)
-    
-    cmd.set('sphere_scale', 0.5, structure_name)
-    cmd.viewport(width=1200, height=1200)
-    cmd.zoom(complete=1)
 
-    png_filepath = path.join(output_dir, structure_name) + ".png"
-    pse_filepath = path.join(output_dir, structure_name) + ".pse"
-
-    cmd.save(pse_filepath)
-    cmd.set('ray_opaque_background', 0)
-    cmd.png(png_filepath, width=1200, height=1200, ray=1)
-
-    return (pse_filepath, png_filepath)
+    return None
 
 def draw_eigenvecotrs(first_structure, last_structure, output_name):
     """ Draws eginvectors based on two PDB structure coordinate difference.
@@ -116,6 +140,8 @@ def draw_eigenvecotrs(first_structure, last_structure, output_name):
 
     cmd.delete("first_obj_frame")
     cmd.delete("last_obj_frame")
+
+    return None
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

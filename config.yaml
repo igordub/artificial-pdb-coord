@@ -33,7 +33,7 @@
     font.family : STIXGeneral
     legend.frameon : False
 
-- colourblind:
+- colors:
     black: 0,0,0
     orange: 230,159,0
     sky_blue: 86,180,233
