@@ -8,7 +8,8 @@ dependencies:
   - ipython
   - jupyter
   - jupyterlab
-  - matplotlib
+  - matplotli
+  - plotly
   - numpy
   - pandas
   - pep8
