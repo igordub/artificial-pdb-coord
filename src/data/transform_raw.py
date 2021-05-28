@@ -10,22 +10,19 @@ import pandas as pd
 import src.utilities as utils
 
 @click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath):
+@click.argument('input_dir', type=click.Path(exists=True))
+@click.argument('output_dir', type=click.Path())
+def main(input_dir, output_dir):
     """ Runs data processing scripts to turn raw data (from data/raw/) into
         interim data ready to be processed (saved in data/interim/).
     """
     logger = logging.getLogger(__name__)
     logger.info('making interim data set from raw data')
-
-    # config = utils.read_config()
-    # pdb_codes = config['pdb']['codeList']
     
     # Get filepaths
-    raw_bfactors_filepaths = sorted(glob.glob(os.path.join(input_filepath, "*.mode.m025.bfactors")))
-    raw_energy_filepaths = sorted(glob.glob(os.path.join(input_filepath, "*.mode.energy")))
-    raw_frequencies_filepaths = sorted(glob.glob(os.path.join(input_filepath, "*.mode.frequencies")))
+    raw_bfactors_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.mode.m025.bfactors")))
+    raw_energy_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.mode.energy")))
+    raw_frequencies_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.mode.frequencies")))
 
     # Load and process raw data
     interim_bfactors = {os.path.basename(filepath) : make_bfactors(filepath) for filepath in raw_bfactors_filepaths}
@@ -33,9 +30,9 @@ def main(input_filepath, output_filepath):
     interim_frequencies = {os.path.basename(filepath) : make_frequencies(filepath) for filepath in raw_frequencies_filepaths}
 
     # Save interim data
-    save_data(interim_bfactors, output_filepath)
-    save_data(interim_energy, output_filepath)
-    save_data(interim_frequencies, output_filepath)
+    save_data(interim_bfactors, output_dir)
+    save_data(interim_energy, output_dir)
+    save_data(interim_frequencies, output_dir)
 
 
 
@@ -73,12 +70,12 @@ def make_frequencies(filepath):
 
     return interim_data
 
-def save_data(data, output_filepath):
+def save_data(data, output_dir):
     """ Saves dataframes with a specified filename from a dictionary. 
         Dictionary format : {"filename_1" : df_1, ...}
     """
     for filename, dataframe in data.items():
-        dataframe.to_csv(path_or_buf=os.path.join(output_filepath, filename),index=False)
+        dataframe.to_csv(path_or_buf=os.path.join(output_dir, filename),index=False)
     
     return None
 
