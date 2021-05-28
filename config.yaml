@@ -34,24 +34,18 @@
     legend.frameon : False
 
 - colourblind:
-    rgb:
-        black: 0,0,0
-        orange: 230,159,0
-        sky_blue: 86,180,233
-        bluish_green: 0,158,115
-        yellow: 240,228,66
-        blue: 0,114,178
-        vermillion: 213,94,0
-        reddish_purple: 204,121,167
-    hex:
-        black: \#000000
-        orange: \#e69f00
-        sky_blue: \#56b4e9
-        bluish_green: \#009e73
-        yellow: \#f0e442
-        blue: \#0072b2
-        vermillion: \#d55e00
-        reddish_purple: \#cc79a7        
+    black: 0,0,0
+    orange: 230,159,0
+    sky_blue: 86,180,233
+    bluish_green: 0,158,115
+    yellow: 240,228,66
+    blue: 0,114,178
+    vermillion: 213,94,0
+    reddish_purple: 204,121,167
 
 # Reference
 # Wong, B., 2011. Points of view: Color blindness.
+
+# Convert to hex
+# "#{:02x}{:02x}{:02x}".format(0, 128, 64)
+# "#008040"
