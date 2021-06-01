@@ -39,6 +39,9 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
                                                        Values between 0 and 1 will decrease the relative mode vector length.
                                                        Values greater than 1 will increase the relative mode vector length.
     notail                   0                 Integer Hides tails and only uses cones (porcupine plot)
+    
+    While in Python environment
+    Returns frame differece vectors as a tuple (v_x,v_y,v_z)
     """
 
     framefirst = cmd.get_model(first_obj_frame, first_state)
@@ -70,7 +73,9 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
     y2 = []
     z2 = []
     exit_flag = False
-
+    v_x = []
+    v_y = []
+    v_z = []
 ##############################################################
 #                                                            #
 # Define an object called "tail" and store the tail and  a   #
@@ -198,6 +203,11 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
         vectorx = x2[mv] - x1[mv]
         vectory = y2[mv] - y1[mv]
         vectorz = z2[mv] - z1[mv]
+        # Save raw framw differences
+        v_x.append(vectorx)
+        v_y.append(vectory)
+        v_z.append(vectorz)
+        
         length = sqrt(vectorx ** 2 + vectory ** 2 + vectorz ** 2)
         if length < cutoff:
             cutoff_counter += 1
@@ -255,7 +265,7 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
 # Print statistics if requested by user                      #
 #                                                            #
 ##############################################################
-
+    mode_repres = "sphere"
     if stat == "show":
         natoms = skipcounter + keepcounter
         print("\nTotal number of atoms = " + str(natoms))
@@ -268,12 +278,14 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
     if keepcounter - cutoff_counter > 0:
         cmd.delete(objectname)
         cmd.load_cgo(arrow, objectname)  # Ray tracing an empty object will cause a segmentation fault.  No arrows = Do not display in PyMOL!!!
-    cmd.show(representation="cartoon", selection=first_obj_frame)
+    cmd.show_as(representation=mode_repres, selection=first_obj_frame)
     if (first_obj_frame != last_obj_frame):
-        cmd.show(representation="cartoon", selection=last_obj_frame)
-        cmd.hide(representation="cartoon", selection=last_obj_frame)
+        cmd.show_as(representation=mode_repres, selection=last_obj_frame)
+        cmd.hide(representation=mode_repres, selection=last_obj_frame)
     cmd.bg_color(color="white")
     cmd.set_view(save_view)
-    return
+    
+    
+    return (v_x, v_y, v_z)
 
 cmd.extend("modevectors", modevectors)

@@ -67,6 +67,7 @@ def main(input_dir, output_dir):
 
     # Draw eigenvectors
     # cmd.reinitialize()
+    eigenvectors = {}
     for mode_number in range(7,13):
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
@@ -76,10 +77,18 @@ def main(input_dir, output_dir):
         cmd.load(mode_filepath, last_structure)
         orange_colour = np.array([int(code) for code in config['colors']['orange'].split(',')])
 
-        modevectors(first_structure, last_structure, outname=output_name, cutoff=0, cut=0,\
-            factor=7.5, head=0.5, tail=0.2, head_length= 1, head_rgb = orange_colour/255, tail_rgb = orange_colour/255)
+        eigenvector = modevectors(first_structure, last_structure, \
+            outname=output_name, cutoff=0, cut=0, factor=7.5, head=0.5, tail=0.2,\
+             head_length= 1, head_rgb = orange_colour/255, tail_rgb = orange_colour/255)     
         cmd.delete(last_structure)
+
+        # Combine eigenvector components
+        eigenvectors[mode_number] = np.array(eigenvector).T
     
+    # Save eigenvectors
+    for mode_number, eigenvector in eigenvectors.items():
+        filename = "eigenvector_{:03}".format(mode_number)
+        np.savetxt(path.join("data/processed", filename), eigenvector, fmt='%.4e')
 
     cmd.show_as('spheres', "CAonly")
     cmd.show('sticks', "CAonly")

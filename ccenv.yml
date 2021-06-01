@@ -10,6 +10,7 @@ dependencies:
   - jupyterlab
   - matplotli
   - plotly
+  - cufflinks
   - numpy
   - pandas
   - pep8
