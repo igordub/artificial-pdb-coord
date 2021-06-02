@@ -19,9 +19,21 @@ def main(output_dir):
 
     config = utils.read_config()
 
-    tetrahed_coords = make_tetrahedron(bond_length=4)
+    cube_coords = make_cube(bond_length=4)
     # print(tetrahed_coords)
-    write_pdb_file(tetrahed_coords, output_filepath=path.join(output_dir, "tetrahed.0.pdb"))
+    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "cube.0.pdb"))
+
+def main_import(output_dir):
+    """ Creates artificial PDB files (saved in pdb/raw).
+    """
+    logger = logging.getLogger(__name__)
+    logger.info('creating artificial PDB files')
+
+    config = utils.read_config()
+
+    cube_coords = make_cube(bond_length=4)
+    # print(tetrahed_coords)
+    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "cube.0.pdb"))
 
 def make_tetrahedron(bond_length=4):
     """ Creates coordinates of an tetrahedron, equilateral triangular pyramid.
@@ -34,6 +46,25 @@ def make_tetrahedron(bond_length=4):
                             (1,0,0),
                             (0.5, np.sqrt(3)*0.5,0),
                             (0.5,np.sqrt(3)/6,np.sqrt(2/3))])
+    coords = bond_length * vertices
+
+    return coords
+
+def make_cube(bond_length=4):
+    """ Creates coordinates of a cube.
+        Returns coordinate array.
+        
+        Input arguments:
+        bond_length - measured in angstroms
+    """
+    vertices = np.array([   (0,0,0),
+                            (1,0,0),
+                            (0,1,0),
+                            (0,0,1),
+                            (1,1,0),
+                            (1,0,1),
+                            (0,1,1),
+                            (1,1,1)])
     coords = bond_length * vertices
 
     return coords
