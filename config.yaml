@@ -18,20 +18,37 @@
       - 3c4d   
 
 - viz:
-    xtick.labelsize: 20
-    ytick.labelsize: 20
-    font.size: 20
-    figure.autolayout: False
-    figure.figsize: 12,6
-    figure.dpi: 300
-    axes.titlesize : 22
-    axes.labelsize : 20
-    lines.linewidth : 2
-    lines.markersize : 6
-    legend.fontsize: 16
-    mathtext.fontset: stix
-    font.family : STIXGeneral
-    legend.frameon : False
+    default:
+        xtick.labelsize: 20
+        ytick.labelsize: 20
+        font.size: 20
+        figure.autolayout: False
+        figure.figsize: 12,6
+        figure.dpi: 300
+        axes.titlesize : 22
+        axes.labelsize : 20
+        lines.linewidth : 2
+        lines.markersize : 6
+        legend.fontsize: 16
+        mathtext.fontset: stix
+        font.family : STIXGeneral
+        legend.frameon : False
+    
+    jupyter:
+        xtick.labelsize: 10
+        ytick.labelsize: 10
+        font.size: 10
+        figure.autolayout: False
+        figure.figsize: 6,3
+        figure.dpi: 300
+        axes.titlesize : 11
+        axes.labelsize : 10
+        lines.linewidth : 1
+        lines.markersize : 3
+        legend.fontsize: 8
+        mathtext.fontset: stix
+        font.family : STIXGeneral
+        legend.frameon : False
 
 - colors:
     black: 0,0,0

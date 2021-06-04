@@ -180,7 +180,7 @@ def main_import(input_dir, output_dir):
     cmd.set('grid_slot', -2, "CAonly")
 
     cmd.viewport(width=1600, height=800)
-    cmd.zoom(buffer=-7.5,complete=1)
+    cmd.zoom(buffer=-5,complete=1)
 
     cmd.save(path.join(output_dir, "modevectors.pse"))
     cmd.ray()
