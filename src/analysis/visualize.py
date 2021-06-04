@@ -32,7 +32,7 @@ def main(input_dir, output_dir):
     pdb_codes = config['pdb']['codeList']
 
     mpl.rcParams.update(mpl.rcParamsDefault)  # VS Code plots not black
-    plt.style.use(config['viz'])
+    plt.style.use(config['viz']['default'])
     
     # Get filepaths
     coords_filepaths = sorted(glob.glob(path.join(input_dir, "*.pdb")))
@@ -68,7 +68,7 @@ def main(input_dir, output_dir):
     # Draw eigenvectors
     # cmd.reinitialize()
     eigenvectors = {}
-    for mode_number in range(7,25):
+    for mode_number in range(7,13):
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
         last_structure = "struct_shift_{:03}".format(mode_number)
@@ -102,7 +102,7 @@ def main(input_dir, output_dir):
      0.707380295,   -0.612679243,    0.352475613,\
      0.000000000,    0.000000000,  -30.692567825,\
      2.000000000,    1.154749870,    0.816750050,\
-   -79.449722290,  140.834869385,  -20.000000000) )
+   -79.449722290,  140.834869385,  -20.000000000))
 
     cmd.save(path.join(output_dir, "modevectors.pse"))
 
@@ -117,7 +117,7 @@ def main_import(input_dir, output_dir):
     pdb_codes = config['pdb']['codeList']
 
     mpl.rcParams.update(mpl.rcParamsDefault)  # VS Code plots not black
-    plt.style.use(config['viz'])
+    plt.style.use(config['viz']['default'])
     
     # Get filepaths
     coords_filepaths = sorted(glob.glob(path.join(input_dir, "*.pdb")))
@@ -128,30 +128,27 @@ def main_import(input_dir, output_dir):
     structure_filepath = path.join(input_dir, "CAonly.pdb")
     cmd.reinitialize()
     structure_name ="CAonly"
-    view = """set_view (\
-     0.254109710,    0.685759246,    0.682028472,\
-    -0.659577310,   -0.392885894,    0.640778780,\
-     0.707380295,   -0.612679243,    0.352475613,\
-     0.000000893,   -0.000001701,  -20.039798737,\
-     2.060348749,    0.924048603,    0.750656426,\
-    17.039802551,   23.039796829,  -20.000000000 )"""
+    pymol_view =    ((\
+                    0.254109710,    0.685759246,    0.682028472,\
+                    -0.659577310,   -0.392885894,    0.640778780,\
+                    0.707380295,   -0.612679243,    0.352475613,\
+                    0.000000893,   -0.000001701,  -20.039798737,\
+                    2.060348749,    0.924048603,    0.750656426,\
+                    17.039802551,   23.039796829,  -20.000000000 ))
 
-    draw_enm(structure_filepath, script_filepath, structure_name=structure_name, view=view)
+    draw_enm(structure_filepath, script_filepath, structure_name=structure_name, view=pymol_view)
     
     cmd.set('sphere_scale', 0.5, structure_name)
 
     cmd.viewport(width=1200, height=1200)
-    cmd.zoom(complete=1)
+    cmd.zoom(buffer=1,complete=1)
 
-    png_filepath = path.join(output_dir, "enm") + ".png"
-    pse_filepath = path.join(output_dir, "enm") + ".pse"
 
-    cmd.save(pse_filepath)
+    cmd.save(path.join(output_dir, "enm.pse"))
     cmd.set('ray_opaque_background', 0)
-    cmd.png(png_filepath, width=1200, height=1200, ray=1)
+    cmd.png(path.join(output_dir, "enm.png"), width=1200, height=1200, ray=1)
 
     # Draw eigenvectors
-    # cmd.reinitialize()
     eigenvectors = {}
     for mode_number in range(7,25):
         first_structure = "CAonly"
@@ -163,7 +160,7 @@ def main_import(input_dir, output_dir):
         orange_colour = np.array([int(code) for code in config['colors']['orange'].split(',')])
 
         eigenvector = modevectors(first_structure, last_structure, \
-            outname=output_name, cutoff=0, cut=0, factor=7.5, head=0.5, tail=0.2,\
+            outname=output_name, cutoff=0, cut=0, factor=5, head=0.5, tail=0.2,\
              head_length= 1, head_rgb = orange_colour/255, tail_rgb = orange_colour/255)     
         cmd.delete(last_structure)
 
@@ -181,15 +178,13 @@ def main_import(input_dir, output_dir):
     cmd.color("0x{:02x}{:02x}{:02x}".format(*blue_colour), "rep spheres and CAonly")
     cmd.set('grid_mode', 1)
     cmd.set('grid_slot', -2, "CAonly")
-    cmd.set_view(\
-    (0.254109710,    0.685759246,    0.682028472,\
-    -0.659577310,   -0.392885894,    0.640778780,\
-     0.707380295,   -0.612679243,    0.352475613,\
-     0.000000000,    0.000000000,  -30.692567825,\
-     2.000000000,    1.154749870,    0.816750050,\
-   -79.449722290,  140.834869385,  -20.000000000) )
+
+    cmd.viewport(width=1600, height=800)
+    cmd.zoom(buffer=-7.5,complete=1)
 
     cmd.save(path.join(output_dir, "modevectors.pse"))
+    cmd.ray()
+    cmd.png(path.join(output_dir, "modevectors.png"))
 
 def load_data(data_filepath):
     """ Load interim data into dataframe.

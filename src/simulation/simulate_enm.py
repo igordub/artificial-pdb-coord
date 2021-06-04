@@ -28,7 +28,7 @@ def main(input_dir, output_dir):
     # pdb_codes = config['pdb']['codeList']
 
     # Get PDB files in input_dir
-    pdb_filenames = ["cube.0.pdb"]
+    pdb_filenames = ["struct.0.pdb"]
     pdb_filepaths = [os.path.join(input_dir, pdb_filename)for pdb_filename in pdb_filenames]
     # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "1m9a.2.pdb")))
     # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.pdb")))

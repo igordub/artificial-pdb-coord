@@ -21,7 +21,7 @@ def main(output_dir):
 
     cube_coords = make_cube(bond_length=4)
     # print(tetrahed_coords)
-    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "cube.0.pdb"))
+    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
 
 def main_import(output_dir):
     """ Creates artificial PDB files (saved in pdb/raw).
@@ -33,7 +33,7 @@ def main_import(output_dir):
 
     cube_coords = make_cube(bond_length=4)
     # print(tetrahed_coords)
-    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "cube.0.pdb"))
+    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
 
 def make_tetrahedron(bond_length=4):
     """ Creates coordinates of an tetrahedron, equilateral triangular pyramid.
