@@ -34,7 +34,6 @@ def main_import(output_dir):
     coords = make_plane(3, 3, bond_length=4)
     # coords = make_cube(bond_length=4)
 
-    print(coords)
     write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
 
 def make_tetrahedron(bond_length=4):

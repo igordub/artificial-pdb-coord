@@ -120,9 +120,8 @@ def main_import(input_dir, output_dir):
     plt.style.use(config['viz']['default'])
     
     # Get filepaths
-    coords_filepaths = sorted(glob.glob(path.join(input_dir, "*.pdb")))
-
-
+    coords_filepaths = sorted(glob.glob(path.join(input_dir, "Mode_???.pdb")))
+    
     # Draw ENM
     script_filepath = path.join(input_dir, "draw_enm.pml")
     structure_filepath = path.join(input_dir, "CAonly.pdb")
@@ -150,7 +149,8 @@ def main_import(input_dir, output_dir):
 
     # Draw eigenvectors
     eigenvectors = {}
-    for mode_number in range(7,25):
+    no_modes = len(coords_filepaths) + 1
+    for mode_number in range(7, no_modes+1):
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
         last_structure = "struct_shift_{:03}".format(mode_number)
