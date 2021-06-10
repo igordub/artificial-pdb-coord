@@ -31,9 +31,11 @@ def main_import(output_dir):
 
     config = utils.read_config()
 
-    cube_coords = make_cube(bond_length=4)
-    # print(tetrahed_coords)
-    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
+    coords = make_plane(3, 3, bond_length=4)
+    # coords = make_cube(bond_length=4)
+
+    print(coords)
+    write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
 
 def make_tetrahedron(bond_length=4):
     """ Creates coordinates of an tetrahedron, equilateral triangular pyramid.
@@ -66,6 +68,33 @@ def make_cube(bond_length=4):
                             (0,1,1),
                             (1,1,1)])
     coords = bond_length * vertices
+
+    return coords
+
+def make_plane(no_x, no_y, bond_length=4):
+    """ Creates coordinates of a plane.
+        Returns coordinate array.
+        
+        Input arguments:
+        bond_length - measured in angstroms
+    """
+    x_values = np.arange(no_x)
+    y_values = np.arange(no_y)
+    z_values = [0] 
+
+    # x_coords, y_coords = np.meshgrid(x_values, y_values, sparse=True)
+    # z_coords = [z_value]
+
+    x_coords, y_coords, z_coords = (x_values, y_values, z_values)
+
+    coords = []
+    for x_coord in x_coords:
+        for y_coord in y_coords:
+            for z_coord in z_coords:
+                coord = (x_coord, y_coord, z_coord)
+                coords.append(coord)
+
+    coords = np.array(coords) * bond_length
 
     return coords
 

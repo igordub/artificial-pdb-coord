@@ -19,5 +19,5 @@ import src.simulation.simulate_enm as simenm
 import src.analysis.visualize as visual
 
 mkpdb.main_import(config['pdb']['rawFilePath'])
-simenm.main_import(config['pdb']['rawFilePath'], config['data']['rawFilePath'])
-visual.main_import(config['data']['rawFilePath'], config['data']['outPathScratch'])
+# simenm.main_import(config['pdb']['rawFilePath'], config['data']['rawFilePath'])
+# visual.main_import(config['data']['rawFilePath'], config['data']['outPathScratch'])
