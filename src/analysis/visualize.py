@@ -21,7 +21,7 @@ import src.analysis.viz_1point as viz_1point
 @click.command()
 @click.argument('input_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path())
-def main(input_dir, output_dir):
+def main_commandline(input_dir, output_dir):
     """ Runs data visualization scripts to turn processed data (from data/processed)
         into plots (saved in scratch/).
     """
@@ -106,7 +106,7 @@ def main(input_dir, output_dir):
 
     cmd.save(path.join(output_dir, "modevectors.pse"))
 
-def main_import(input_dir, output_dir):
+def main(input_dir, output_dir):
     """ Runs data visualization scripts to turn processed data (from data/processed)
         into plots (saved in scratch/).
     """
@@ -121,7 +121,7 @@ def main_import(input_dir, output_dir):
     
     # Get filepaths
     coords_filepaths = sorted(glob.glob(path.join(input_dir, "Mode_???.pdb")))
-    
+
     # Draw ENM
     script_filepath = path.join(input_dir, "draw_enm.pml")
     structure_filepath = path.join(input_dir, "CAonly.pdb")
@@ -149,7 +149,7 @@ def main_import(input_dir, output_dir):
 
     # Draw eigenvectors
     eigenvectors = {}
-    no_modes = len(coords_filepaths) + 1
+    no_modes = len(coords_filepaths)
     for mode_number in range(7, no_modes+1):
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
@@ -243,4 +243,4 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
 
-    main()
+    main_commandline()

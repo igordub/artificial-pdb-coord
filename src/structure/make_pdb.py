@@ -11,7 +11,7 @@ from urllib.request import urlretrieve
 
 @click.command()
 @click.argument('output_dir', type=click.Path())
-def main(output_dir):
+def main_commandline(output_dir):
     """ Creates artificial PDB files (saved in pdb/raw).
     """
     logger = logging.getLogger(__name__)
@@ -22,8 +22,10 @@ def main(output_dir):
     cube_coords = make_cube(bond_length=4)
     # print(tetrahed_coords)
     write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
+    
+    return None
 
-def main_import(output_dir):
+def main(output_dir):
     """ Creates artificial PDB files (saved in pdb/raw).
     """
     logger = logging.getLogger(__name__)
@@ -35,6 +37,8 @@ def main_import(output_dir):
     # coords = make_cube(bond_length=4)
 
     write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
+
+    return None
 
 def make_tetrahedron(bond_length=4):
     """ Creates coordinates of an tetrahedron, equilateral triangular pyramid.
@@ -169,4 +173,4 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
 
-    main()
+    main_commandline()

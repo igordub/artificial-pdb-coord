@@ -17,7 +17,7 @@ import pandas as pd
 @click.command()
 @click.argument('input_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path())
-def main(input_dir, output_dir):
+def main_commandline(input_dir, output_dir):
     """ Runs simualtion scripts for processed PDB data (from pdb/processed/) 
         to generate raw data ready to be processed (saved in data/raw/).
     """
@@ -37,7 +37,7 @@ def main(input_dir, output_dir):
     for pdb_filepath in pdb_filepaths:
         scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 9999.00")
 
-def main_import(input_dir, output_dir):
+def main(input_dir, output_dir):
     """ Runs simualtion scripts for processed PDB data (from pdb/processed/) 
         to generate raw data ready to be processed (saved in data/raw/).
     """
@@ -156,4 +156,4 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
 
-    main()
+    main_commandline()
