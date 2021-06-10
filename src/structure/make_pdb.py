@@ -22,7 +22,7 @@ def main_commandline(output_dir):
     cube_coords = make_cube(bond_length=4)
     # print(tetrahed_coords)
     write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
-    
+
     return None
 
 def main(output_dir):
@@ -33,7 +33,7 @@ def main(output_dir):
 
     config = utils.read_config()
 
-    coords = make_plane(3, 3, bond_length=4)
+    coords = make_cuboid(3, 3, 3, bond_length=4)
     # coords = make_cube(bond_length=4)
 
     write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
@@ -87,6 +87,30 @@ def make_plane(no_x, no_y, bond_length=4):
 
     # x_coords, y_coords = np.meshgrid(x_values, y_values, sparse=True)
     # z_coords = [z_value]
+
+    x_coords, y_coords, z_coords = (x_values, y_values, z_values)
+
+    coords = []
+    for x_coord in x_coords:
+        for y_coord in y_coords:
+            for z_coord in z_coords:
+                coord = (x_coord, y_coord, z_coord)
+                coords.append(coord)
+
+    coords = np.array(coords) * bond_length
+
+    return coords
+
+def make_cuboid(no_x, no_y, no_z, bond_length=4):
+    """ Creates coordinates of a plane.
+        Returns coordinate array.
+        
+        Input arguments:
+        bond_length - measured in angstroms
+    """
+    x_values = np.arange(no_x)
+    y_values = np.arange(no_y)
+    z_values = np.arange(no_z) 
 
     x_coords, y_coords, z_coords = (x_values, y_values, z_values)
 

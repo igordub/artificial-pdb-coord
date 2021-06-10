@@ -151,6 +151,7 @@ def main(input_dir, output_dir):
     eigenvectors = {}
     no_modes = len(coords_filepaths)
     for mode_number in range(7, no_modes+1):
+        print("Mode number = {}".format(mode_number))
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
         last_structure = "struct_shift_{:03}".format(mode_number)
