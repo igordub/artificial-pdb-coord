@@ -17,6 +17,26 @@ import pandas as pd
 @click.command()
 @click.argument('input_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path())
+def main_commandline(input_dir, output_dir):
+    """ Runs simualtion scripts for processed PDB data (from pdb/processed/) 
+        to generate raw data ready to be processed (saved in data/raw/).
+    """
+    logger = logging.getLogger(__name__)
+    logger.info('making simulation data set from processed PDB structures')
+
+    # config = utils.read_config()
+    # pdb_codes = config['pdb']['codeList']
+
+    # Get PDB files in input_dir
+    pdb_filenames = ["struct.0.pdb"]
+    pdb_filepaths = [os.path.join(input_dir, pdb_filename)for pdb_filename in pdb_filenames]
+    # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "1m9a.2.pdb")))
+    # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.pdb")))
+
+    # Simulate ENM
+    for pdb_filepath in pdb_filepaths:
+        scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 9999.00")
+
 def main(input_dir, output_dir):
     """ Runs simualtion scripts for processed PDB data (from pdb/processed/) 
         to generate raw data ready to be processed (saved in data/raw/).
@@ -28,14 +48,14 @@ def main(input_dir, output_dir):
     # pdb_codes = config['pdb']['codeList']
 
     # Get PDB files in input_dir
-    pdb_filenames = ["tetrahed.0.pdb"]
+    pdb_filenames = ["struct.0.pdb"]
     pdb_filepaths = [os.path.join(input_dir, pdb_filename)for pdb_filename in pdb_filenames]
     # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "1m9a.2.pdb")))
     # pdb_filepaths = sorted(glob.glob(os.path.join(input_dir, "*.pdb")))
 
     # Simulate ENM
     for pdb_filepath in pdb_filepaths:
-        scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 8.00")
+        scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 9999.00")
 
 def scan_enm(pdb_filepath, output_dir, flag_combination="-ca -het -c 8.00"):
     """ Executes Shell script with essential DDPT routines.
@@ -136,4 +156,4 @@ if __name__ == '__main__':
     # load up the .env entries as environment variables
     load_dotenv(find_dotenv())
 
-    main()
+    main_commandline()

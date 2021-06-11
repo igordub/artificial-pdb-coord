@@ -51,8 +51,16 @@ echo "Running: FREQEN"
 FREQEN -s 1 -e $NO_MODES
 # mv mode.energy mode.m$NO_MODES.energy
 
+# echo "Running: PROJECT"
+# PROJECT -pdb CAonly.pdb -s 1 -e 106 -scale 10
+
+
 echo "Running: PROJECT"
-PROJECT -pdb CAonly.pdb -s 1 -e 106 -scale 1
+for MODE_NUM in $(seq 1 $NO_MODES)
+do
+    SCALING_FACTOR=$(sed "${MODE_NUM}q;d" eigenvalues | bc)
+    PROJECT -pdb CAonly.pdb -s $MODE_NUM -e $MODE_NUM -scale $SCALING_FACTOR
+done
 
 # for MODE_NUM in 1 5 10 25 50 75 100
 # do
@@ -68,7 +76,7 @@ PROJECT -pdb CAonly.pdb -s 1 -e 106 -scale 1
 # Write format flags to save files
 # CUTOFF=$(echo $GENENMM_FLAGS | sed 's/.*-c\([0-9]*\.[0-9]*\)/\1/')
 # PRINTF_STATEMENT=$(echo $GENENMM_FLAGS | sed "s/ //g" | sed "s/\(.*-c\).*/\1%05.2f/g")
-printf -v FORMATTED_GENENMM_FLAGS $PRINTF_STATEMENT $CUTOFF
+# printf -v FORMATTED_GENENMM_FLAGS $PRINTF_STATEMENT $CUTOFF
 
 echo "Copy all simulation results to results dir:"
 cp * ${RESULTS_DIR}

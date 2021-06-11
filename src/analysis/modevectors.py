@@ -212,51 +212,54 @@ def modevectors(first_obj_frame, last_obj_frame, first_state=1, last_state=1, ou
         if length < cutoff:
             cutoff_counter += 1
             continue
-        t = 1.0 - (cut / length)
-        x2[mv] = x1[mv] + factor * t * vectorx
-        y2[mv] = y1[mv] + factor * t * vectory
-        z2[mv] = z1[mv] + factor * t * vectorz
-        vectorx = x2[mv] - x1[mv]
-        vectory = y2[mv] - y1[mv]
-        vectorz = z2[mv] - z1[mv]
-        length = sqrt(vectorx ** 2 + vectory ** 2 + vectorz ** 2)
-        d = arrow_head_length  # Distance from arrow tip to arrow base
-        t = 1.0 - (d / length)
-        if notail:
-            t = 0
-        tail = [
-            # Tail of cylinder
-            CYLINDER, x1[mv], y1[mv], z1[mv]\
-            , x1[mv] + (t + 0.01) * vectorx, y1[mv] + (t + 0.01) * vectory, z1[mv] + (t + 0.01) * vectorz\
-            , arrow_tail_radius, tr, tg, tb, tr, tg, tb  # Radius and RGB for each cylinder tail
-        ]
-        if notail == 0:
-            arrow.extend(tail)
-
-        x = x1[mv] + t * vectorx
-        y = y1[mv] + t * vectory
-        z = z1[mv] + t * vectorz
-        dx = x2[mv] - x
-        dy = y2[mv] - y
-        dz = z2[mv] - z
-        seg = d / 100
-        intfactor = int(factor)
-        if version < 1.1:  # Version >= 1.1 has cone primitive
-            for i in range(100, 0, -1):  # i=100 is tip of cone
-                print(i)
-                t1 = seg * i
-                t2 = seg * (i + 1)
-                radius = arrow_head_radius * (1.0 - i / (100.0))  # Radius of each disc that forms cone
-                head = [
-                    CYLINDER, x + t2 * dx, y + t2 * dy, z + t2 * dz\
-                    , x + t1 * dx, y + t1 * dy, z + t1 * dz\
-                    , radius, hr, hg, hb, hr, hg, hb  # Radius and RGB for slice of arrow head
-                ]
-                arrow.extend(head)
+        elif length < 1e-7:
+            continue
         else:
-            head = [
-                CONE, x, y, z, x + d * dx, y + d * dy, z + d * dz, arrow_head_radius, 0.0, hr, hg, hb, hr, hg, hb, 1.0, 1.0]
-            arrow.extend(head)
+            t = 1.0 - (cut / length)
+            x2[mv] = x1[mv] + factor * t * vectorx
+            y2[mv] = y1[mv] + factor * t * vectory
+            z2[mv] = z1[mv] + factor * t * vectorz
+            vectorx = x2[mv] - x1[mv]
+            vectory = y2[mv] - y1[mv]
+            vectorz = z2[mv] - z1[mv]
+            length = sqrt(vectorx ** 2 + vectory ** 2 + vectorz ** 2)
+            d = arrow_head_length  # Distance from arrow tip to arrow base
+            t = 1.0 - (d / length)
+            if notail:
+                t = 0
+            tail = [
+                # Tail of cylinder
+                CYLINDER, x1[mv], y1[mv], z1[mv]\
+                , x1[mv] + (t + 0.01) * vectorx, y1[mv] + (t + 0.01) * vectory, z1[mv] + (t + 0.01) * vectorz\
+                , arrow_tail_radius, tr, tg, tb, tr, tg, tb  # Radius and RGB for each cylinder tail
+            ]
+            if notail == 0:
+                arrow.extend(tail)
+
+            x = x1[mv] + t * vectorx
+            y = y1[mv] + t * vectory
+            z = z1[mv] + t * vectorz
+            dx = x2[mv] - x
+            dy = y2[mv] - y
+            dz = z2[mv] - z
+            seg = d / 100
+            intfactor = int(factor)
+            if version < 1.1:  # Version >= 1.1 has cone primitive
+                for i in range(100, 0, -1):  # i=100 is tip of cone
+                    print(i)
+                    t1 = seg * i
+                    t2 = seg * (i + 1)
+                    radius = arrow_head_radius * (1.0 - i / (100.0))  # Radius of each disc that forms cone
+                    head = [
+                        CYLINDER, x + t2 * dx, y + t2 * dy, z + t2 * dz\
+                        , x + t1 * dx, y + t1 * dy, z + t1 * dz\
+                        , radius, hr, hg, hb, hr, hg, hb  # Radius and RGB for slice of arrow head
+                    ]
+                    arrow.extend(head)
+            else:
+                head = [
+                    CONE, x, y, z, x + d * dx, y + d * dy, z + d * dz, arrow_head_radius, 0.0, hr, hg, hb, hr, hg, hb, 1.0, 1.0]
+                arrow.extend(head)
 
 ##############################################################
 #                                                            #
