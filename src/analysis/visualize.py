@@ -12,11 +12,12 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import seaborn as sns
 import numpy as np
+import math
 from pymol import cmd
+from biopandas.pdb import PandasPdb
 import src.utilities as utils
 from src.analysis.modevectors import modevectors
 import src.analysis.viz_1point as viz_1point
-
 
 @click.command()
 @click.argument('input_dir', type=click.Path(exists=True))
@@ -155,7 +156,7 @@ def main(input_dir, output_dir):
         first_structure = "CAonly"
         mode_filepath = path.join(input_dir, "Mode_{:03}.pdb".format(mode_number))
         last_structure = "struct_shift_{:03}".format(mode_number)
-        output_name= "mode_{:03}".format(mode_number)
+        output_name= "eigenvector_{:03}".format(mode_number)
 
         cmd.load(mode_filepath, last_structure)
         orange_colour = np.array([int(code) for code in config['colors']['orange'].split(',')])
@@ -168,10 +169,54 @@ def main(input_dir, output_dir):
         # Combine eigenvector components
         eigenvectors[mode_number] = np.array(eigenvector).T
     
+    # Draw nodal points
+    coords = PandasPdb().read_pdb("data/raw/CAonly.pdb")
+    coords = coords.df['ATOM'][['x_coord','y_coord','z_coord']].to_numpy()
+    for mode_num, eigenvector in eigenvectors.items():
+        dotprod = calcualte_dotprod(eigenvector)
+        
+        neg_dotprod_idxs = np.where(dotprod < 0)
+        neg_dotprod_idxs = [(neg_dotprod_idxs[0][i],neg_dotprod_idxs[1][i]) for i in range(len(neg_dotprod_idxs[0]))]
+        
+        nodal_points = find_nodal_points(coords, eigenvector, neg_dotprod_idxs)
+        # cmd.reinitialize()
+        structure_name ="CAonly"
+        pymol_view =    ((\
+                        0.254109710,    0.685759246,    0.682028472,\
+                        -0.659577310,   -0.392885894,    0.640778780,\
+                        0.707380295,   -0.612679243,    0.352475613,\
+                        0.000000893,   -0.000001701,  -20.039798737,\
+                        2.060348749,    0.924048603,    0.750656426,\
+                        17.039802551,   23.039796829,  -20.000000000 ))
+        # cmd.delete('all')
+        # cmd.load(structure_filepath, structure_name)
+        # cmd.set('sphere_scale', 0.5, structure_name)
+        
+        for idx, nodal_point in enumerate(nodal_points):
+            nodal_point = nodal_point.tolist()
+            cmd.pseudoatom("nodal_points_{:03}".format(mode_num), selection='', name='PS1', resn='NDP', resi=str(idx+1), chain='A',
+                        segi='PSDO', elem='PS', vdw=-1.0, hetatm=1, b=0.0, q=0.0, color='tv_red',
+                        label='', pos=nodal_point, state=0, mode='rms', quiet=1)
+
+        cmd.show_as('sphere', "nodal_points_{:03}".format(mode_num))
+        cmd.set('sphere_scale', 0.3, "nodal_points_{:03}".format(mode_num))
+
+        # cmd.viewport(width=1200, height=1200)
+        # cmd.zoom(buffer=1,complete=1)
+
+        # cmd.save("tmp/mode_{:03}.pse".format(mode_num))
+        # cmd.set('ray_opaque_background', 0)
+        # cmd.png("tmp/mode_{:03}.png".format(mode_num), width=1200, height=1200, ray=1)
+
     # Save eigenvectors
     for mode_number, eigenvector in eigenvectors.items():
         filename = "eigenvector_{:03}".format(mode_number)
         np.savetxt(path.join("data/processed", filename), eigenvector, fmt='%.4e')
+
+    # Group eigenvectors and nodal points
+    for mode_num in range(7, no_modes+1):
+        cmd.group("mode_{:03}".format(mode_num), members="eigenvector_{:03}".format(mode_num))
+        cmd.group("mode_{:03}".format(mode_num), members="nodal_points_{:03}".format(mode_num))
 
     cmd.show_as('spheres', "CAonly")
     cmd.show('sticks', "CAonly")
@@ -232,6 +277,57 @@ def draw_eigenvecotrs(first_structure, last_structure, output_name):
     cmd.delete("last_obj_frame")
 
     return None
+
+def calcualte_dotprod(eigenvector):
+    no_beads = np.shape(eigenvector)[0]
+    dotprod = np.zeros((no_beads, no_beads))
+
+    for i in np.arange(no_beads):
+        for j in np.arange(i+1):
+            vector_1 = eigenvector[i]
+            vector_2 = eigenvector[j]
+            dotprod[i][j] = np.dot(vector_1, vector_2)
+
+    dotprod = dotprod + dotprod.T
+    return dotprod
+
+def calcualte_crossprod_norm(eigenvector):
+    no_beads = np.shape(eigenvector)[0]
+    crossprod_norm = np.zeros((no_beads, no_beads))
+
+    for i in np.arange(no_beads):
+        for j in np.arange(i+1):
+            vector_1 = eigenvector[i]
+            vector_2 = eigenvector[j]
+            crossprod_norm[i][j] = np.linalg.norm(np.cross(eigenvector[i], eigenvector[j]))
+
+    crossprod_norm = crossprod_norm + crossprod_norm.T
+    return crossprod_norm
+
+def factorize(number):
+    """ Factorizes number into two near integers.
+    """
+    x = math.floor(math.sqrt(number))
+    y = math.ceil(number / x)
+    return (x, y)
+
+def find_nodal_points(coords, eigenvector, neg_dotprod_idxs):
+    nodal_points = []
+    for residue_pair in neg_dotprod_idxs:
+        residue_idx_1 = residue_pair[0]
+        residue_idx_2 = residue_pair[1]
+
+        pos_vector_1 = coords[residue_idx_1]
+        pos_vector_2 = coords[residue_idx_2]
+
+        diff_vector = pos_vector_2 - pos_vector_1
+        eigenvector_mag_1 = np.linalg.norm(eigenvector[residue_idx_1])
+        eigenvector_mag_2 = np.linalg.norm(eigenvector[residue_idx_2])
+
+        nodal_point = diff_vector * (eigenvector_mag_1 / (eigenvector_mag_1 + eigenvector_mag_2)) + pos_vector_1
+        nodal_points.append(nodal_point)
+    
+    return nodal_points
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
