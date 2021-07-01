@@ -33,7 +33,7 @@ def main(output_dir):
 
     config = utils.read_config()
 
-    coords = make_cuboid(3, 3, 3, bond_length=4)
+    coords = make_tetrahedron(bond_length=4)
     # coords = make_cube(bond_length=4)
 
     write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
