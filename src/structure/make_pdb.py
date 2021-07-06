@@ -19,9 +19,9 @@ def main_commandline(output_dir):
 
     config = utils.read_config()
 
-    cube_coords = make_cube(bond_length=4)
+    coords = make_tetrahedron(bond_length=4)
     # print(tetrahed_coords)
-    write_pdb_file(cube_coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
+    write_pdb_file(coords, output_filepath=path.join(output_dir, "struct.0.pdb"))
 
     return None
 
