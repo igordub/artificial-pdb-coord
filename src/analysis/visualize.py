@@ -175,10 +175,10 @@ def main(input_dir, output_dir):
     for mode_num, eigenvector in eigenvectors.items():
         dotprod = calcualte_dotprod(eigenvector)
         
-        neg_dotprod_idxs = np.where(dotprod < -0.95)
-        neg_dotprod_idxs = [(neg_dotprod_idxs[0][i],neg_dotprod_idxs[1][i]) for i in range(len(neg_dotprod_idxs[0]))]
+        residue_pairs = np.where(dotprod < 0)
+        residue_pairs = [(residue_pairs[0][i],residue_pairs[1][i]) for i in range(len(residue_pairs[0]))]
         
-        nodal_points = find_nodal_points(coords, eigenvector, neg_dotprod_idxs)
+        nodal_points = find_nodal_points(coords, eigenvector, residue_pairs)
         # cmd.reinitialize()
         structure_name ="CAonly"
         pymol_view =    ((\
@@ -192,15 +192,14 @@ def main(input_dir, output_dir):
         # cmd.load(structure_filepath, structure_name)
         # cmd.set('sphere_scale', 0.5, structure_name)
         
-        nodal_points_name = "nodal_points_{:03}".format(mode_num)
         for idx, nodal_point in enumerate(nodal_points):
             nodal_point = nodal_point.tolist()
-            cmd.pseudoatom(nodal_points_name, selection='', name='PS1', resn='NDP', resi=str(idx+1), chain='A',
+            cmd.pseudoatom("nodal_points_{:03}".format(mode_num), selection='', name='PS1', resn='NDP', resi=str(idx+1), chain='A',
                         segi='PSDO', elem='PS', vdw=-1.0, hetatm=1, b=0.0, q=0.0, color='tv_red',
                         label='', pos=nodal_point, state=0, mode='rms', quiet=1)
 
-        cmd.show_as('sphere', nodal_points_name)
-        cmd.set('sphere_scale', 0.3, nodal_points_name)
+        cmd.show_as('sphere', "nodal_points_{:03}".format(mode_num))
+        cmd.set('sphere_scale', 0.3, "nodal_points_{:03}".format(mode_num))
 
         # cmd.viewport(width=1200, height=1200)
         # cmd.zoom(buffer=1,complete=1)
@@ -280,9 +279,6 @@ def draw_eigenvecotrs(first_structure, last_structure, output_name):
     return None
 
 def calcualte_dotprod(eigenvector):
-    """ Calculates dot product matrix for all pairwise 
-        sub-vector combinations.
-    """
     no_beads = np.shape(eigenvector)[0]
     dotprod = np.zeros((no_beads, no_beads))
 
@@ -296,9 +292,6 @@ def calcualte_dotprod(eigenvector):
     return dotprod
 
 def calcualte_crossprod_norm(eigenvector):
-    """ Calculates cross product norm matrix for all pairwise 
-        sub-vector combinations.
-    """
     no_beads = np.shape(eigenvector)[0]
     crossprod_norm = np.zeros((no_beads, no_beads))
 
@@ -306,14 +299,10 @@ def calcualte_crossprod_norm(eigenvector):
         for j in np.arange(i+1):
             vector_1 = eigenvector[i]
             vector_2 = eigenvector[j]
-            crossprod_norm[i][j] = np.linalg.norm(np.cross(vector_1, vector_2))
+            crossprod_norm[i][j] = np.linalg.norm(np.cross(eigenvector[i], eigenvector[j]))
 
     crossprod_norm = crossprod_norm + crossprod_norm.T
     return crossprod_norm
-
-def find_all_sign_change(eigenvector):
-    
-    return sign_change
 
 def factorize(number):
     """ Factorizes number into two near integers.
@@ -323,9 +312,6 @@ def factorize(number):
     return (x, y)
 
 def find_nodal_points(coords, eigenvector, residue_pairs):
-    """ Finds nodal points between two vectors.
-        
-    """
     nodal_points = []
     for residue_pair in residue_pairs:
         residue_idx_1 = residue_pair[0]
