@@ -11,7 +11,7 @@
 - pdb:
     rawFilePath:     pdb/raw/
     intFilePath:     pdb/interim/
-    proFilePath:     pdb/proccessed/
+    proFilePath:     pdb/processed/
     extFilePath:     pdb/external/
     codeList:
       - 1a2b

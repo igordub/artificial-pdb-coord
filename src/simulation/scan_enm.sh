@@ -56,7 +56,7 @@ FREQEN -s 1 -e $NO_MODES
 
 
 echo "Running: PROJECT"
-for MODE_NUM in $(seq 1 $NO_MODES)
+for MODE_NUM in $(seq 1 106)
 do
     SCALING_FACTOR=$(sed "${MODE_NUM}q;d" eigenvalues | bc)
     PROJECT -pdb CAonly.pdb -s $MODE_NUM -e $MODE_NUM -scale $SCALING_FACTOR

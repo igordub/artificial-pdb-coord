@@ -20,5 +20,5 @@ import src.analysis.visualize as visual
 
 # utils.clean()
 # mkpdb.main(config['pdb']['rawFilePath'])
-# simenm.main(config['pdb']['rawFilePath'], config['data']['rawFilePath'])
+# simenm.main(config['pdb']['proFilePath'], config['data']['rawFilePath'])
 visual.main(config['data']['rawFilePath'], config['data']['outPathScratch'])

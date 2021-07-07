@@ -106,6 +106,8 @@ def main_commandline(input_dir, output_dir):
    -79.449722290,  140.834869385,  -20.000000000))
 
     cmd.save(path.join(output_dir, "modevectors.pse"))
+    
+#########################################################################################
 
 def main(input_dir, output_dir):
     """ Runs data visualization scripts to turn processed data (from data/processed)
@@ -151,6 +153,7 @@ def main(input_dir, output_dir):
     # Draw eigenvectors
     eigenvectors = {}
     no_modes = len(coords_filepaths)
+    no_modes = 7
     for mode_number in range(7, no_modes+1):
         print("Mode number = {}".format(mode_number))
         first_structure = "CAonly"
