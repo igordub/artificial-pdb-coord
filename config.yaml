@@ -19,11 +19,12 @@
 
 - viz:
     default:
-        xtick.color: 323034
-        ytick.color: 323034
-        text.color: 323034
+        xtick.color: '323034'
+        ytick.color: '323034'
+        text.color: '323034'
         lines.markeredgecolor: black
         patch.facecolor        : bc80bd
+        figure.figsize: 6,3
         patch.force_edgecolor  : True
         patch.linewidth: 0.8
         scatter.edgecolors: black
@@ -41,7 +42,7 @@
         legend.frameon: True
         legend.framealpha: 0.8
         legend.fontsize: 10
-        legend.edgecolor: 0.9
+        legend.edgecolor: '0.9'
         legend.borderpad: 0.2
         legend.columnspacing: 1.5
         legend.labelspacing:  0.4
@@ -54,6 +55,8 @@
         axes.labelcolor: black
         axes.edgecolor: black
         axes.linewidth: 0.6
+        axes.xmargin: 0.05
+        axes.ymargin: 0.05
         axes.spines.right : False
         axes.spines.top : False
         axes.grid: False
